@@ -1,5 +1,14 @@
+body {
+  color: white;
+}
+
 .App {
   text-align: center;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
 }
 
 .App-logo {
