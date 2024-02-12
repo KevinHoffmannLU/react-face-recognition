@@ -5,6 +5,8 @@ import Logo from './components/Logo/Logo';
 import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
+import SignIn from './components/SignIn/SignIn';
+import Register from './components/Register/Register';
 import { useState } from 'react';
 
 function App() {
@@ -12,6 +14,8 @@ function App() {
   const [imageURL, setIMAGE_URL] = useState('');
   const [input, setInput] = useState('');
   const [box, setBox] = useState([{}]);
+  const [route, setRoute] = useState('signin');
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
@@ -27,7 +31,6 @@ function App() {
   }
 
   const displayFaceBox = (box) => {
-    console.log(box);
     setBox(box);
   };
 
@@ -69,28 +72,60 @@ function App() {
 
   function onButtonSubmit() {
     setIMAGE_URL(input);
-    fetch("https://api.clarifai.com/v2/models/face-detection/outputs", returnClarifaiRequestOptions(imageURL))
+    fetch("https://api.clarifai.com/v2/models/face-detection/outputs", returnClarifaiRequestOptions(input))
         .then(response => response.json())
         .then(result => displayFaceBox(calculateFaceLocation(result)))
         .catch(error => console.log('error', error));
   }
+
+  function onRouteChange(route){
+    if (route === 'signout') {
+      setIsSignedIn(false);
+    } else if (route === 'home') {
+      setIsSignedIn(true);
+    }
+    setRoute(route);
+  }
+
   return (
     <div className="App">
       <>
         <div>
-        <ParticlesBg type="cobweb" num={20} bg={true} className="particles"/>
+          <ParticlesBg type="cobweb" num={20} bg={true} className="particles"/>
         </div>
       </>
-     <Navigation />
-     <Logo />
-     <Rank />
-     <ImageLinkForm 
-     handleChange={handleChange} 
-     onButtonSubmit={onButtonSubmit} 
-     />
-     <FaceRecognition box={box} imageURL={imageURL}/>
+     <Navigation isSignedIn={isSignedIn} onRouteChange={onRouteChange} />
+     { 
+     route === 'home' 
+      ? <div>
+          <Logo />
+          <Rank />
+          <ImageLinkForm 
+          handleChange={handleChange} 
+          onButtonSubmit={onButtonSubmit} 
+          />
+          <FaceRecognition 
+          box={box} 
+          imageURL={imageURL}
+          />
+        </div> 
+     : (
+        route === 'signin'
+        ? <SignIn onRouteChange={onRouteChange} />
+        : (
+          route === 'signout'
+          ? <SignIn onRouteChange={onRouteChange} />
+          : <Register onRouteChange={onRouteChange} />
+          )
+     ) 
+      }
     </div>
   );
 }
 
 export default App;
+
+// test images
+// https://images.unsplash.com/photo-1687825520449-e7fc1a144cb2?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+// https://plus.unsplash.com/premium_photo-1707403865913-d8ca5c2962dd?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+// https://images.unsplash.com/photo-1706550632858-6216ce4e61a7?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
