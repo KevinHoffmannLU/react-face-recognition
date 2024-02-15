@@ -116,7 +116,7 @@ function App() {
      route === 'home' 
       ? <div>
           <Logo />
-          <Rank />
+          <Rank name={user.name} entries={user.entries} />
           <ImageLinkForm 
           handleChange={handleChange} 
           onButtonSubmit={onButtonSubmit} 
@@ -128,10 +128,10 @@ function App() {
         </div> 
      : (
         route === 'signin'
-        ? <SignIn onRouteChange={onRouteChange} />
+        ? <SignIn onRouteChange={onRouteChange} loadUser={loadUser} />
         : (
           route === 'signout'
-          ? <SignIn onRouteChange={onRouteChange} />
+          ? <SignIn onRouteChange={onRouteChange} loadUser={loadUser} />
           : <Register onRouteChange={onRouteChange} loadUser={loadUser} />
           )
      ) 
