@@ -7,7 +7,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
 
