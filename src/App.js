@@ -7,7 +7,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 function App() {
 
@@ -91,7 +91,22 @@ function App() {
     setIMAGE_URL(input);
     fetch("https://api.clarifai.com/v2/models/face-detection/outputs", returnClarifaiRequestOptions(input))
         .then(response => response.json())
-        .then(result => displayFaceBox(calculateFaceLocation(result)))
+        .then(result => {
+          if (result) {
+            fetch('http://localhost:3000/image', {
+              method: 'put',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                id: user.id
+              })
+            })
+            .then(response => response.json())
+            .then(count => {
+              setUser({...user, entries: count});
+            })
+          }
+          displayFaceBox(calculateFaceLocation(result))
+        })
         .catch(error => console.log('error', error));
   }
 
